@@ -1,0 +1,70 @@
+class Solution:
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+
+        def check_heap(new_words, index, b) :
+            if b == 0 :
+                while index > 0 :
+                    if new_words[index] < new_words[(index-1)//2] :
+                        new_words[index], new_words[(index-1)//2] = new_words[(index-1)//2], new_words[index]
+                        index = (index-1)//2
+                        
+                    else :
+                        break
+            else :
+
+                index_tmp = index
+                index = 0
+
+                if index_tmp <= 0 :
+                    return [new_words[0]]
+
+                while index*2 + 1 < index_tmp :
+
+                    if (index*2)+2 >= index_tmp or new_words[(index*2)+1] < new_words[(index*2)+2] :
+                        tmp = index*2 + 1
+
+                    else :
+                        tmp = index*2 + 2
+                        
+                    if new_words[index] > new_words[tmp] :
+                        new_words[index], new_words[tmp] = new_words[tmp], new_words[index]
+                        index = tmp
+
+                    else :
+                        break
+
+            return new_words
+
+
+        new_words = list()
+        answer = dict()
+        cnt = len(words)
+
+        for i in range(cnt) :
+            new_words.append(words[i])
+            index = i
+            new_words = check_heap(new_words, index, 0)
+
+        for i in range(cnt) :
+            tmp = new_words[0]
+
+            if tmp not in answer :
+                answer[new_words[0]] = 1
+            else :
+                answer[new_words[0]] += 1
+
+            if len(new_words) == 1 :
+                break
+
+            new_words[0] = new_words.pop()
+            new_words = check_heap(new_words, len(new_words), 1)
+
+            
+        answer = sorted(answer.items(), reverse=True, key=lambda item:item[1])
+        print(answer)
+        words = list()
+
+        for i in range(k) :
+            words.append(answer[i][0])
+
+        return words
