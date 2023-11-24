@@ -1,0 +1,67 @@
+from collections import deque
+
+def solution(land):
+
+    def bfs(i, j):
+
+        nonlocal land
+        visit = [1, 0, -1, 0]
+        visit_y = [0, 1, 0, -1]
+        visit_x = set([i])
+        cnt = 1
+        stack = deque([[i, j]])
+        a = [len(land[0]), len(land)]
+        land[j][i] = 0
+        
+        while stack :
+
+            v = stack.popleft()
+
+
+            for i in range(4) :
+                tmp_i = v[0] + visit[i]
+                tmp_j = v[1] + visit_y[i]
+                
+                if tmp_i >= 0 and tmp_i < a[0] and tmp_j >= 0 and tmp_j < a[1] :
+                    
+                    if land[tmp_j][tmp_i] == 1 :
+                        visit_x.add(tmp_i)
+                        cnt += 1
+                        land[tmp_j][tmp_i] = 0
+                        stack.append([tmp_i, tmp_j])
+                        
+        return cnt, visit_x, j
+
+
+
+    answer = 0
+    l = 0
+    if isinstance(land[0], list) == False :
+        for i in range(len(land)) :
+            tmp_ans = 0
+            while len(land) > i and land[i] == 1:
+                tmp_ans += 1
+                i += 1
+            if answer < tmp_ans :
+                answer = tmp_ans
+        return answer
+
+
+    else :
+        l = len(land[0])
+        ans_list = [0 for i in range(len(land[0]))]
+
+    for i in range(l) :
+        j = 0
+        while j < len(land) :
+            if land[j][i] == 1 :
+                
+                tmp, visited_x, j = bfs(i, j)
+                for s in visited_x :
+                    ans_list[s] += tmp
+
+            j += 1
+            
+    return max(ans_list)
+
+print(solution([[0, 0, 0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 1, 1, 0, 0], [1, 1, 0, 0, 0, 1, 1, 0], [1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 1, 0, 0, 0, 1, 1]]))
