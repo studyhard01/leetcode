@@ -1,0 +1,29 @@
+from collections import deque
+
+class Solution:
+    def connect(self, root: 'Node') -> 'Node':
+        q = deque([])
+        q.append([root, 0])
+        tr = {}
+        if root == None :
+            return None
+        while q :
+            a = q.popleft()
+            if tr.get(a[1], -1) == -1 :
+                tr[a[1]] = [a[0]]
+            else :
+                tr[a[1]].append(a[0])
+
+            if a[0] == None :
+                break
+            if a[0].left != None :
+                q.append([a[0].left, a[1]+1])
+            if a[0].right != None :
+                q.append([a[0].right, a[1]+1])
+                
+        for i in tr.keys() :
+            prev = tr[i][0]
+            for j in range(1,len(tr[i])) :
+                prev.next, prev  = tr[i][j], tr[i][j]
+            prev.next = None
+        return root
