@@ -1,0 +1,52 @@
+class Solution:
+    def candy(self, ratings: List[int]) -> int:
+        prev = ratings[0]
+        answer = 1
+        a = len(ratings)
+        current_candy = 1
+        tmp_candy = 1
+        history = [[1, 1]]
+
+        for i in range(1, a):
+            if prev < ratings[i]:
+                current_candy += 1
+                tmp_candy = 0
+
+            elif prev > ratings[i]:
+                if current_candy == 1:
+                    tmp_candy += 1
+                    answer += tmp_candy
+                    current_candy = 0
+                    tmp = i - tmp_candy + 1
+                    j = tmp_candy
+                    while tmp > 0:
+                        if history[tmp][0] == 0:
+                            break
+                        elif (
+                            j >= history[tmp - 1][1] and ratings[tmp] < ratings[tmp - 1]
+                        ):
+                            answer += history[tmp][0]
+                        tmp -= 1
+                        j = history[tmp][1]
+                        tmp = tmp - history[tmp][0]
+
+                else:
+                    current_candy = 1
+                    tmp_candy += 1
+
+            else:
+                current_candy = 1
+                tmp_candy = 1
+
+            prev = ratings[i]
+            answer += current_candy
+
+            if current_candy == 0:
+                current_candy = 1
+            history.append([tmp_candy, current_candy])
+
+        if a == 1:
+            return 1
+
+        return answer
+#runtime 63%, memory 8%
